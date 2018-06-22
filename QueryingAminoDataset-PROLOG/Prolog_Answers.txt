@@ -1,0 +1,162 @@
+
+
+%Question1 ?- isaminoacid(a).
+isaminoacid(Letter) :-
+    aminoname(Letter,_,_).
+
+%This rule aims to take as the letter of the amino acid as input and display true or false 
+%depending on the letter inputted.
+%The letter of the aminoacid is inputted, and if the letter is in the aminoname fact list, 
+%then the output will be true. If the the letter like (z) is not in the amino fact list then the 
+%output will be false. The underscore means that thoe varaibles do not matter - (they can be 
+%labelled shortname and longname, it will not make a difference). The underscore will be an 
+%essential part of a rule to be able to idenify path in the next several questions.
+
+%_____
+
+%Question2 ?- longshort('Val').
+longshort(Shortname) :-
+    aminoname(_,Longname,Shortname),
+    print(Longname).
+
+%This rule aims to take shortname as input and display the corresponding longname.
+%The shortname of the amino acid is inputted, and it will pass the shortname to the aminoname
+%fact list and collect its corresponding longname, and display it. (The underscore which stands for
+%the aminoname letter is not needed - though it will still work, therefore it is easier to identify
+%which variable is passed along which amino fact list).
+
+%_____
+
+%Question3 ?- longSN('small','neutral').
+longSN(Small,Neutral):-
+    aminoclass(Shortname,_,Small),
+    aminoclass(Shortname,_,Neutral),
+    aminoname(_,Longname,Shortname),
+    print(Longname).
+
+%This rule takes 'small' and 'neutral' as input and aims to display the longnames according to
+%the inputs characteristics. It will pass the inputs along to aminoclass fact list and identify 
+%the shortname of all the 'small' amino class(ed) acids, and do the same for all 'neutral' amino
+%class(ed) acids. Then those shortnames will be passed to the aminoname fact list to collect its'
+%corresponding longname and display it. In this case, Proline & Theorine should be the output.
+
+%_____
+
+%Question4 ?- auamino('aromatic','uncharged').
+arocharge(Aromatic,Uncharged):-
+    aminoclass(Shortname,_,Aromatic),
+    aminoclass(Shortname,_,Uncharged),
+    aminoname(Letter,_,Shortname),
+    printQ4(Letter).
+
+printQ4(Letter):-
+    aminoname(Letter,Longname,Shortname),
+    print(Letter), nl,
+    print(Shortname), nl,
+    print(Longname).
+
+%This rule takes 'aromatic' and 'uncharged' as input and aims to display its' corresponding
+%letter, shortname and longname of the amino acids that match the characteristics. At first,
+%the shortnames of aromatic and uncharged amino acids will be collected from the aminoclass
+%fact list. Then those shortnames are passed to identify the corresponding letters using the 
+%aminoname fact list. The the letter variable is passed to 'printQ4' where the output of rule
+%'arocharge' is used as input (letter) in printQ4. The variables are identified with the use of
+%aminoname fact list, then 'print' is used to display the letters, shortnames and longnames for 
+%all aminoacids that are aromatic and uncharged. In this case, Phe,Trp,Tyr should the outputs.
+
+%_____
+
+%Question5 ?- findaminodna([t,g,g]).
+findaminodna([H|T]):-
+    aminotodna(Letter,[H|T]),
+    print(Letter).
+
+%The amino dna list is inputted (H|T) and is linked to aminotodna fact list to
+%collect the corresponding letter of the dna list. Then the letter is displayed
+%using print. In this case, w is printed for the amino dna list.
+
+%_____
+
+%Question6 ?- listreport(['Ala', 'Gly']).
+listreport([Shortname|Comeback]):-
+    aminoname(Letter,Longname,Shortname),
+    write('Letter: '),print(Letter),nl,
+    write('Shortname: '),print(Shortname),nl,
+    write('Longname: '),print(Longname),nl,
+    aminoclass(Shortname,'Hydropathy',Hp),
+    aminoclass(Shortname,'Volume',V),
+    aminoclass(Shortname,'Chemical',Ch),
+    aminoclass(Shortname,'Charge',C),
+    aminoclass(Shortname,'Polarity',P),
+    write('Hydropathy: '),print(Hp),nl,
+    write('Volume: '),print(V),nl,
+    write('Chemical: '),print(Ch),nl,
+    write('Charge: '),print(C),nl,
+    write('Polarity: '),print(P),nl,
+    write('DNA: '),
+    setof(Sequences,aminotodna(Letter,Sequences),Store),print(Store),nl,
+listreport(Comeback),nl, nl, write(''),nl.
+
+%This rule aims to list all characteristics of the amino acid that is inputted as the 
+%shortname. The input is structured as a list because it is a recursive call and will be 
+%explained further. The variables will be declared from aminoname fact list and will print the 
+%amino acids letter, shortname, and longname. Then the variables from aminoclass will be 
+%declared and labeled and displayed accordingly. The 'setof' function is used to collect the 
+%dna sequences using letter (of the corresponding shortnames that were inputted), as a link to 
+%the aminoname fact list. The sequences are then stored in 'Store' which is then displayed 
+%using print. The 'listreport(Comeback)' is a recursive call to perform the same rule with any more 
+%of the inputs. (Heads is first item and tails is the second, third and so forth until all
+%of inputs are processed).
+
+%_____
+
+%Question7 - %proseq([f,k],Y).
+proseq([],[]). %empty list acting as a stopping conditon
+proseq([FirstItemsOfFirstInputs|RestoftheLetters],[Sequence|Label]):- 
+    aminotodna(FirstItemsOfFirstInputs,Sequence),
+proseq(RestoftheLetters,Label).
+
+%This rule aims to produce sequences of the amino dna(s) after inputting the 
+%letter of amino acids dna(s), which will be be sequenced as the variable 'Label'.
+%'Sequence' and 'Label' are empty lists at first (act as stores).
+%Each 'Sequence' is 'Label'ed and formed by using the 'FirstItemsOfFirstInputs'
+%followed by sequencing with 'RestoftheLetters'.
+%With the example of f and k, f will be considered the head and k will be the 
+%tail. The first dna sequence of f will paired with the first dna sequence
+%of k. This will be Label'ed and stored in 'Sequence'. The process will 
+%continue the same, but this time with k's second dna sequence again the 
+%'Sequence' will be 'Label'ed in a new line. After all k's dna sequences are 
+%paired with f's first dna sequence, then f's second dna sequence will be paired with
+%the remaining dna sequence of k. 
+%If there were 3, or more letters inputted the process will occur the same, working
+%backwards - the first two letters first dna sequences will be paired with the third and
+%the second 'Sequence' will be the same but with the second dna sequence of the third
+%letter until all possible sequences are formed. 
+%This is a recursive rule where it process the ResoftheLetters and Labels' them.
+
+%_____
+
+%Question8 ?- dnacount([f,k]).
+
+dnacount([He|Ta]):-
+    proseq([He|Ta],Y),print(Y),nl,append(Y,Newresult),print(Newresult),nl,
+    G=g,findall(G,member(G,Newresult),StoreG),length(StoreG,LengthG),
+    write('g = '),print(LengthG),nl,
+    C=c,findall(C,member(C,Newresult),StoreC),length(StoreC,LengthC),
+    write('c = '),print(LengthC),nl,
+    A=a,findall(A,member(A,Newresult),StoreA),length(StoreA,LengthA),
+    write('a = '),print(LengthA),nl,
+    T=t,findall(T,member(T,Newresult),StoreT),length(StoreT,LengthT),
+    write('t = '),print(LengthT),nl, 
+dnacount(Y).
+
+%The rule above uses the Question's 7 rule (proseq(He|Ta). It collects the sequences based on the
+%variable Y (Label). It then appends each sequence and stores it in 'Newresult', and displays the Newresult
+%using print.
+%The ‘findall' function uses the capital letter of the intended letter search (G=g), using member it
+%checks if G is part of Newresult (appended dna sequence) and stores it in StoreG. Then it finds the 
+%number of letters in StoreG using length and stores it in LengthG (only g’s in that list, makes it 
+%relevant count the amount of letters in that list). The label is formed and LengthG is printed.
+
+%_________
+

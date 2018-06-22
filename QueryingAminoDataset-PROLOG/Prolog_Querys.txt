@@ -1,0 +1,8 @@
+Question1 ?- isaminoacid(a).
+Question2 ?- longshort('Val').
+Question3 ?- longSN('small','neutral').
+Question4 ?- arocharge('aromatic','uncharged').
+Question5 ?- findaminodna([t,g,g]).
+Question6 ?- listreport(['Ala', 'Gly']).
+Question7 - %proseq([f,k],Y).
+Question8 ?- dnacount([f,k]).
